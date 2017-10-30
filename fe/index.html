@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ensof TroubleShooting Page</title>
+    <!-- CSS overrides - remove if you don't need it -->
+    <link rel="stylesheet" href="css/jquery.fullPage.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css">
+    <link rel="stylesheet" href="css/app.css">
+
+</head>
+<body>
+
+
+<!-- 디테일 모달 -->
+<div id="detailModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">x</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h3 class="detail-title"></h3>
+            </div>
+            <div class="modal-body">
+                <div class="row detail-body">
+
+                </div>
+                <div id="disqus_thread"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 로그인 모달 -->
+<div id="loginModal" class="modal fade" role="dialog">
+    <div id="login_bg"
+         style="background-color: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%;"></div>
+    <div class="modal-dialog login_popup" id="login_popup">
+        <div class="modal-content login_popup_content">
+            <div class="modal-header line_none">
+                <button type="button" class="close" id="login_close" data-dismiss="modal">
+                    <span class='loginexit' aria-hidden="true">x</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h2 class="title_Type">
+                    For Admin
+                </h2>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="login_id" data-msg="ID" class="form-control input-sm"
+                       placeholder="ID"
+                       name="id"
+                       size="15">
+                <br>
+                <input type="password" id="login_pwd" data-msg="패스워드" title="패스워드" class="form-control"
+                       placeholder="PASSWORD" name="pwd"
+                       size="15"><br>
+                <button class="btn btn-primary btn-default" type="button" id="login_btn" title="로그인">로그인
+                </button>
+
+                <div id='loginErrmsg' class="subtitle_Type_mb50"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div id="show-message-btn" data-toggle="modal" data-target="#message-modal"
+     type="button" hidden="hidden">
+</div>
+<!--메시지를 띄우는용도의 창 show_message사용-->
+<div id="message-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header line_none">
+                <button type="button" class="close" id="show-message-close"
+                        data-dismiss="modal">
+                    <span class='show-message-close' aria-hidden="true">x</span> <span
+                        class="sr-only">Close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-center" id="my-message"></p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Scripts Don't remove ↓ -->
+<script>
+
+    var disqus_config = function () {
+        this.page.url = "doblue.ga" + '/ensof/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = "doblue.ga" + '/ensof/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+
+    (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://doblue.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+    Disqus.</a></noscript>
+<script src="js/jquery-3.2.1.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+<script src="js/app.js"></script>
+<script src="ckeditor/ckeditor.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#fullpage').fullpage({
+            anchors: ['firstPage', 'secondPage', '3rdPage', '4thPage'],
+            sectionsColor: ['#FFFFFF', 'lavenderblush', '#d2deea', '#ffffff'],
+            menu: '#menu',
+            navigation: true,
+            navigationPosition: 'right',
+            navigationTooltips: ['First page', 'Second page', 'Third and last page'],
+            responsiveWidth: 1100
+        });
+
+        var lis = $('.nav > li');
+        menu_focus(lis[0], 1);
+
+        $("#write-modal-btn").click(function () {
+            write_init();
+        });
+
+        var write_init = function () {
+            CKEDITOR.replace('write_content', {
+                customConfig: 'ckeditor/config.js',
+                width: '100%',
+                height: '300px',
+                filebrowserUploadUrl: 'imageUpload',
+            })
+
+        };
+
+        CKEDITOR.on('dialogDefinition', function (ev) {
+            var dialogName = ev.data.name;
+            var dialog = ev.data.definition.dialog;
+            var dialogDefinition = ev.data.definition;
+            if (dialogName == 'image') {
+                dialog.on('show', function (obj) {
+//                 this.selectPage('Upload'); //업로드텝으로 시작
+                });
+                dialogDefinition.removeContents('advanced'); // 자세히탭 제거
+                dialogDefinition.removeContents('Link'); // 링크탭 제거
+            }
+        });
+
+
+    });
+
+
+</script>
+</body>
+</html>

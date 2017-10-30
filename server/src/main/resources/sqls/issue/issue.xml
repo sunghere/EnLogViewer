@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Issue">
+
+    <insert id="insert"
+            parameterType="kr.co.ensof.model.Issue">
+        INSERT INTO ISSUE (title, content, step, del, category) VALUES
+            (#{title}, #{content}, #{step}, 0, #{category})
+    </insert>
+    <select id="listAll" parameterType="kr.co.ensof.model.Issue"
+            resultType="kr.co.ensof.model.Issue">
+        SELECT
+            seq,
+            title,
+            content,
+            step,
+            del,
+            category
+        FROM ISSUE
+        ORDER BY SEQ DESC
+    </select>
+    <select id="detail" parameterType="kr.co.ensof.model.Issue"
+            resultType="kr.co.ensof.model.Issue">
+
+        SELECT
+            seq,
+            title,
+            content,
+            step,
+            del,
+            category
+        FROM ISSUE
+        WHERE SEQ = #{seq}
+        ORDER BY SEQ
+    </select>
+    <update id="complete" parameterType="kr.co.ensof.model.Issue">
+
+        UPDATE ISSUE
+        SET STEP = 10
+        WHERE SEQ = #{seq}
+    </update>
+    <update id="update" parameterType="kr.co.ensof.model.Issue">
+
+        UPDATE ISSUE
+        SET TITLE = #{title}, CONTENT = #{content}, STEP = #{step}, category = #{category}
+        WHERE SEQ = #{seq}
+    </update>
+    <update id="stepup" parameterType="kr.co.ensof.model.Issue">
+
+        UPDATE ISSUE
+        SET STEP = #{step}
+        WHERE SEQ = #{seq}
+    </update>
+    <update id="delete" parameterType="java.lang.Integer">
+
+        UPDATE ISSUE
+        SET DEL = 1
+        WHERE SEQ = #{seq}
+    </update>
+</mapper>

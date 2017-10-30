@@ -1,0 +1,411 @@
+var prev_filter = '*';
+"use strict";
+/*로그인*/
+$("#login_btn").click(function () {
+    if ($("#login_id").val() == "") {
+        show_message($("#login_id").attr("data-msg") + " 입력해 주십시요.");
+        $("#login_userid").focus();
+    } else if ($("#login_pwd").val() == "") {
+        show_message($("#login_pwd").attr("data-msg") + " 입력해 주십시요.");
+        $("#login_pwd").focus();
+    } else {
+        $.ajax({
+            url: "login",
+            method: "post",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({"id": $("input[id='login_id']").val(), "pwd": $("input[id='login_pwd']").val()}),
+            success: function (data) {
+                console.log(data);
+                if (data.result == "SUCS") {
+                    $(".loginexit").click();
+                    show_message("Success");
+                    $('#login').remove();
+                    $('#write-modal-btn').show();
+                } else {
+                    $('#loginErrmsg').html("<i class='icon ion-ios-close'></i>아이디 혹은 비밀번호를 확인해 주세요").css({
+                        "color": "red"
+                    });
+                }
+            }
+        })
+    }
+});
+
+
+/*메인 리스트 필터링*/
+var list_filter = function (filter) {
+    var data = $(".isotope-item").filter(filter + ":visible");
+    data.css({"top": "", "bottom": "", "left": "", "right": ""});
+
+    $.each(data, function (index, val) {
+        var me = $(this);
+        me.attr("data-index", index);
+
+
+        if (index >= 9) {
+            me.css({"display": "none"});
+            me.attr('my-filter', "filter");
+
+        } else {
+
+
+        }
+    })
+    // $(".isotope-item").css("position","relative")
+};
+var cleanTransitionStyle = {
+    transitionProperty: '',
+    transitionDuration: '',
+    transitionDelay: '',
+    transform: '',
+    transition: ''
+};
+
+var delay = (function () {
+    var timer = 0;
+    return function (callback, ms) {
+        clearTimeout(timer);
+        timer = setTimeout(callback, ms);
+    };
+})();
+/*클릭하면  줌 li에*/
+var menu_focus = function (element, i) {
+    if ($(element).hasClass('active')) {
+        if (i == 4) {
+            if ($('.navbar').hasClass('inv') == false)
+                return;
+        } else {
+            return;
+        }
+    }
+
+    $('.menu-nav li').removeClass('active');
+    $(element).addClass('active');
+
+    var icon = $(element).find('.icon');
+
+
+    var left_pos = icon.offset().left - $('.menu-nav').offset().left;
+    var el_width = icon.width() + $(element).find('.text').width() + 10;
+
+    $('.active-menu').stop(false, false).animate(
+        {
+            left: left_pos,
+            width: el_width
+        },
+        1500,
+        'easeInOutQuart'
+    );
+};
+/*프로젝트 다음리스트*/
+$(".icon-next").click(function () {
+    var data = $(".isotope-item");
+    var last = data.filter(":visible:last").attr("data-index");
+    $.each(data, function (index, val) {
+        if (last % 8 != 0) {
+            if (index >= 0 && index < 9) {
+                $(val).css({"display": ""});
+                $(this).attr('my-filter', "");
+
+            } else {
+                $(val).css({"display": "none"});
+                $(this).attr('my-filter', "filter");
+
+            }
+        } else {
+            if (index > last && index < last + 9) {
+                $(val).css({"display": ""});
+                $(this).attr('my-filter', "");
+
+            } else {
+                $(val).css({"display": "none"});
+                $(this).attr('my-filter', "filter");
+            }
+
+        }
+
+    });
+});
+
+/*화살표 보이기*/
+var nextIcon_show = function () {
+    var visible = $(".isotope-item").filter(":visible");
+    var hidden = $(".isotope-item").filter(":hidden");
+
+    var height = $(".portfolio").height();
+    var itemHeight = $(".isotope-item").height();
+    var list = visible.length;
+
+    if (visible.length >= 9 && hidden.length > 0) {
+        // $(".icon-next").css("display", "block")
+        $(".icon-next").fadeIn();
+    } else {
+        // $(".icon-next").css("display", "none")
+        $(".icon-next").fadeOut();
+    }
+
+    if ($(window).width() < 768) {
+        $(".isotope-container").css("height", list * itemHeight);
+    } else if ($(window).width() < 992) {
+        $(".isotope-container").css("height", Math.ceil(list / 2) * itemHeight);
+    } else {
+        $(".portfolio").css("height", height);
+    }
+
+};
+
+/*초기 세팅*/
+project_list_load();
+
+/*포트폴리오 클릭 필터링*/
+$('.isotope-nav li').click(function () {
+    /*var data = $(".isotope-item");
+     $.each(data, function (index, val) {
+     var me = $(val);
+
+     me.attr("data-index", "");
+
+     if (me.attr('my-filter') == 'filter') {
+     me.css({"display": ""});
+
+     me.attr("my-filter", "");
+
+     }
+
+     });*/
+
+    var me = $(this);
+    var filterValue = me.attr('data-filter');
+    $(".isotope-container").isotope({filter: filterValue});
+
+    /*if (filterValue == '*') {
+     setTimeout("list_filter('')", 500);
+
+     setTimeout("nextIcon_show();", 600);
+
+     } else {
+
+     setTimeout("list_filter('" + filterValue + "');", 500);
+
+     setTimeout("nextIcon_show();", 600);
+
+     }*/
+});
+
+/*프로젝트 디테일 클릭*/
+$(".isotope-container").on("click", ".isotope-item", function () {
+    var seq = $(this).attr('data-seq');
+    project_detail_load(seq);
+});
+
+/* 총 작업일 */
+var project_period = function (sdate, edate) {
+    var sdateArray = sdate.split("-");
+    var edateArray = edate.split("-");
+
+    var sdateObj = new Date(sdateArray[0], Number(sdateArray[1]) - 1, sdateArray[2]);
+    var edateObj = new Date(edateArray[0], Number(edateArray[1]) - 1, edateArray[2]);
+
+    var between = Math.floor((edateObj.getTime() - sdateObj.getTime()) / 1000 / 60 / 60 / 24);
+    if (between < 0) return 0;
+    else return between;
+};
+
+/*프로젝트 디테일*/
+var project_detail_load = function (seq) {
+    $.ajax({
+        url: "project/" + seq,
+        method: "get",
+        success: function (data) {
+            var str1 = '<div class="title">' + data.title + '</div>' +
+                '<div class="duration">' + data.sdate + ' ~ ' + data.edate +
+                ', 총 작업일: ' + project_period(data.sdate, data.edate) + '일</div>';
+            var str2 = '<div class="content">' + data.content + '</div>';
+            if (data.url != "" && data.url != null) {
+                str2 += '<div class="url btn btn-primary"><a href="' + data.url + '" target="_blank"> 프로젝트 보러가기</a></div>';
+                console.log(data.url)
+            }
+            $(".detail-title").html(str1);
+            $(".detail-body").html(str2);
+            $(".content img").attr("style", "width:100%; height:auto;");
+
+
+            DISQUS.reset({
+                reload: true,
+                config: function () {
+                    this.page.identifier = "doblue.ga" + data.seq;
+                    this.page.url = "http://doblue.ga/#!" + data.seq;
+                }
+            });
+        }, fail: function () {
+            alert("실패")
+        }
+
+    })
+};
+
+/* 프로젝트 등록 */
+$(".write-btn").click(function () {
+    var check = true;
+    var category = $('#w_category').attr("value");
+    var sdate = $('#sdatepicker').val();
+    var edate = $('#edatepicker').val();
+    var title = $('#w_title').val();
+    var content = CKEDITOR.instances.write_content.getData();
+    var img = imageParse(content);
+    var url = $('#w_url').val();
+    if (sdate == null || sdate == '' || edate == null || edate == '') {
+        $('#dateInput').css({'background-color': '##f2dede', 'border-color': '#ebccd1'});
+        check = false;
+    }
+    if (title == null || title == '') {
+        $('#titleInput').css({'background-color': '##f2dede', 'border-color': '#ebccd1'});
+        check = false;
+    }
+    if (content == null || content == "" || content.length < 1) {
+        $('#contentInput').css({'background-color': '##f2dede', 'border-color': '#ebccd1'});
+        check = false;
+    }
+    var object = {};
+    object.category = category;
+    object.sdate = sdate;
+    object.edate = edate;
+    object.title = title;
+    object.content = content;
+    object.img = img;
+    object.url = url;
+
+    if (check === true) {
+        $.ajax({
+            url: "project",
+            method: "post",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(object),
+            success: function (data) {
+                if (data.result == "SUCS") {
+                    $('#sdatepicker').val('');
+                    $('#edatepicker').val('');
+                    $('#w_title').val('');
+                    CKEDITOR.instances.write_content.setData('');
+                    $(".close").click();
+                    project_list_load();
+                } else {
+                    show_message("실패")
+
+                }
+            }, fail: function () {
+                show_message("실패")
+
+
+            }
+        });
+
+
+    } else {
+        show_message("빈칸이 있어요 전부 입력해주세요");
+    }
+});
+
+/*메인에 뜰 이미지 파싱*/
+imageParse = function (content) {
+    var contentArray = [];
+    if (content != null && content != "") {
+        if (content.indexOf("<img")) {
+            contentArray = content.split('alt="" src="');
+            if (contentArray[1] != null && contentArray[1] != "") {
+                var src = contentArray[1].split('"');
+                return src[0];
+            } else {
+
+            }
+        }
+    }
+    return "";
+};
+
+/*리스트 필터링 버튼 클릭*/
+$(".isotope-nav li").click(function () {
+    $(this).siblings().removeClass("active");
+    $(this).addClass("active");
+});
+
+/*카테고리 선택부분*/
+$('.categorySel').change(function () {
+    $('#w_category').attr('value', $('.categorySel option:selected').text());
+});
+
+/*데이트피커*/
+var dates = $("#sdatepicker, #edatepicker ").datepicker({
+    dateFormat: "yy-mm-dd",
+    yearSuffix: '년',
+    showOtherMonths: true,
+    yearRange: "2017:2022",
+    monthNames: ["1월", "2월", "3월", "4월", "5월", "6월",
+        "7월", "8월", "9월", "10월", "11월", "12월"],
+    onSelect: function (selectedDate) {
+        var option = this.id == "sdatepicker" ? "minDate" : "maxDate",
+            instance = $(this).data("datepicker"),
+            date = $.datepicker.parseDate(
+                instance.settings.dateFormat ||
+                $.datepicker._defaults.dateFormat,
+                selectedDate, instance.settings);
+        dates.not(this).datepicker("option", option, date);
+    }
+});
+
+
+var show_message = function (str) {
+    $('#my-message').html(str);
+
+    $('#show-message-btn').click();
+};
+
+$('.send-mail button').click(function () {
+    mailSend();
+});
+
+function mailSend() {
+    var email = $('#email').val();
+    var name = $('#name').val();
+    var content = $('#message').val();
+
+
+    var blank_pattern = /[\s]/g;
+    var email_pattern = /[0-9a-zA-Z][_0-9a-zA-Z-]*@[_0-9a-zA-Z-]+(\.[_0-9a-zA-Z-]+){1,2}$/;
+
+    if (email.length < 5 || blank_pattern.test(email) || !(email_pattern.test(email))) {
+
+        show_message("Oops.. Email Check plz");
+
+        return false;
+    }
+    if (name.length < 3 || blank_pattern.test(name)) {
+        show_message("Oops.. name Check plz");
+        return false;
+    }
+
+    if (content.length < 10) {
+        show_message("Oops.. write content plz");
+        return false;
+    }
+
+
+    $.ajax({
+        url: "email",
+        method: "post",
+        dataType: 'text json', // JSON 타입이 아닐경우 제거
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify({
+            'title': "Doblue portfolio 사이트 메일<" + name + ">", "email": email, 'content': content, 'name': name
+        }), success: function (data) {
+            if (data.result == "SUCS") {
+                show_message("[Success]Thanks - ");
+                $('#message').val('')
+            } else {
+
+                show_message("[Error]try later..")
+            }
+
+        }
+    })
+}
