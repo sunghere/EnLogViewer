@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Cube">
+
+
+    <select id="listAll" parameterType="kr.co.ensof.model.Cube"
+            resultType="kr.co.ensof.model.Cube">
+        SELECT
+            TRTIMESTAMP AS TRTIMESTAMP,
+            SYSCODE     AS SYSCODE,
+            ORGCODE     AS ORGCODE,
+            DESTINATION AS DESTINATION,
+            SOURCE      AS SOURCE,
+            TRNO        AS TRNO,
+            RQGB        AS RQGB,
+            SRGB        AS SRGB,
+            MSGCODE     AS MSGCODE,
+            TXCD        AS TXCD,
+            TRCD        AS TRCD,
+            RESPCD      AS RESPCD,
+            TRACENO     AS TRACENO,
+            USERDATA    AS USERDATA,
+            ETC1        AS ETC1,
+            ETC2        AS ETC2,
+            ETC3        AS ETC3,
+            INLEN       AS INLEN,
+            ETIME       AS ETIME,
+            RTIME       AS RTIME,
+            TXLEN       AS TXLEN,
+            COMPRESS_YN AS COMPRESS_YN,
+            TXCOUNT     AS TXCOUNT
+        FROM EN_TRLOG T
+
+        WHERE 1000 > ROWNUM
+    </select>
+    <select id="listByTime" parameterType="kr.co.ensof.model.Cube"
+            resultType="kr.co.ensof.model.Cube">
+        SELECT
+            T.TRTIMESTAMP AS TRTIMESTAMP,
+            T.SYSCODE     AS SYSCODE,
+            T.ORGCODE     AS ORGCODE,
+            T.DESTINATION AS DESTINATION,
+            T.SOURCE      AS SOURCE,
+            T.TRNO        AS TRNO,
+            T.RQGB        AS RQGB,
+            T.SRGB        AS SRGB,
+            T.MSGCODE     AS MSGCODE,
+            T.TXCD        AS TXCD,
+            T.TRCD        AS TRCD,
+            T.RESPCD      AS RESPCD,
+            T.TRACENO     AS TRACENO,
+            T.USERDATA    AS USERDATA,
+            T.ETC1        AS ETC1,
+            T.ETC2        AS ETC2,
+            T.ETC3        AS ETC3,
+            T.INLEN       AS INLEN,
+            T.ETIME       AS ETIME,
+            T.RTIME       AS RTIME,
+            T.TXLEN       AS TXLEN,
+            T.COMPRESS_YN AS COMPRESS_YN,
+            T.TXCOUNT     AS TXCOUNT,
+            M.TXSEQ     AS TXSEQ,
+            M.TXDATA    AS TXDATA
+        FROM EN_TRLOG T LEFT OUTER JOIN EN_TRLOG_MESG M
+                ON T.SYSCODE = M.SYSCODE AND T.TRTIMESTAMP = M.TRTIMESTAMP AND T.TRNO = M.TRNO AND T.ORGCODE = M.ORGCODE
+                   AND T.DESTINATION = M.DESTINATION AND T.SOURCE = M.SOURCE AND T.RQGB = M.RQGB AND T.SRGB = M.SRGB
+        WHERE 1000 > ROWNUM AND M.TRTIMESTAMP >= #{sTimeStamp} AND #{eTimeStamp} >= M.TRTIMESTAMP
+    </select>
+    <select id="detail" parameterType="kr.co.ensof.model.Cube"
+            resultType="kr.co.ensof.model.Cube">
+        SELECT
+            T.TRTIMESTAMP AS TRTIMESTAMP,
+            T.SYSCODE     AS SYSCODE,
+            T.ORGCODE     AS ORGCODE,
+            T.DESTINATION AS DESTINATION,
+            T.SOURCE      AS SOURCE,
+            T.TRNO        AS TRNO,
+            T.RQGB        AS RQGB,
+            T.SRGB        AS SRGB,
+            T.MSGCODE     AS MSGCODE,
+            T.TXCD        AS TXCD,
+            T.TRCD        AS TRCD,
+            T.RESPCD      AS RESPCD,
+            T.TRACENO     AS TRACENO,
+            T.USERDATA    AS USERDATA,
+            T.ETC1        AS ETC1,
+            T.ETC2        AS ETC2,
+            T.ETC3        AS ETC3,
+            T.INLEN       AS INLEN,
+            T.ETIME       AS ETIME,
+            T.RTIME       AS RTIME,
+            T.TXLEN       AS TXLEN,
+            T.COMPRESS_YN AS COMPRESS_YN,
+            T.TXCOUNT     AS TXCOUNT,
+            M.TXSEQ     AS TXSEQ,
+            M.TXDATA    AS TXDATA
+        FROM EN_TRLOG T LEFT OUTER JOIN EN_TRLOG_MESG M
+                ON T.SYSCODE = M.SYSCODE AND T.TRTIMESTAMP = M.TRTIMESTAMP AND T.TRNO = M.TRNO AND T.ORGCODE = M.ORGCODE
+                   AND T.DESTINATION = M.DESTINATION AND T.SOURCE = M.SOURCE AND T.RQGB = M.RQGB AND T.SRGB = M.SRGB
+        WHERE T.SYSCODE = #{sysCode} AND T.TRTIMESTAMP = #{trTimeStamp}
+    </select>
+
+</mapper>

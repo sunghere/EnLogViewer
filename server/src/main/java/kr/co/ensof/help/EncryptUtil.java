@@ -9,7 +9,7 @@ import java.security.spec.RSAPublicKeySpec;
 
 
 public class EncryptUtil {
-    private static final String key = "!+Doblue+!";
+    private static final String key = "!+ensof+!";
     public static KeyPair rsaKey = null;
     public static KeyPairGenerator clsKeyPairGenerator;
     public static KeyPair clsKeyPair;

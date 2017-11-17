@@ -3,22 +3,85 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ensof TroubleShooting Page</title>
+    <title>Mc*CUBE DB LogViewer</title>
     <!-- CSS overrides - remove if you don't need it -->
-    <link rel="stylesheet" href="css/jquery.fullPage.css">
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="css/jquery-ui-timepicker-addon.css"/>
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"/>
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css">
+          href="css/bootstrap-select.min.css">
+    <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/>
     <link rel="stylesheet" href="css/app.css">
 
 </head>
 <body>
+<div class="logo">
+    <a href="#"><img src="image/logo.png" class="img-rounded" alt="enSof"></a>
+</div>
+<div id="cubeInfo">
+    <input type="text" id="sdatepicker" placeholder="StartDate" name="sdate">
+    <input type="text" id="stimedatepicker" placeholder="HH-mm-dd">
+    ~
+    <input type="text" id="edatepicker" placeholder="EndDate" name="edate">
+    <input type="text" id="etimedatepicker" placeholder="HH-mm-dd">
+</div>
 
-
+<table id="cubeTable" class="table table-striped nowrap hover" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+        <th rowspan="2">Timestamp</th>
+        <th colspan="5">Name</th>
+        <th colspan="2">Time</th>
+        <th colspan="11">Information</th>
+    </tr>
+    <tr>
+        <th>SysCd</th>
+        <th>TrNo</th>
+        <th>OrgCode</th>
+        <th>Source</th>
+        <th>Destination</th>
+        <th>ETime</th>
+        <th>RTime</th>
+        <th>RqGb</th>
+        <th>SrGb</th>
+        <th>TraceNo</th>
+        <th>TxCd</th>
+        <th>ResCd</th>
+        <th>Message</th>
+        <th>IO</th>
+        <th>Data</th>
+        <th>UserData</th>
+        <th>Channel</th>
+        <th>Etc</th>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <th>Timestamp</th>
+        <th>SysCd</th>
+        <th>TrNo</th>
+        <th>OrgCode</th>
+        <th>Source</th>
+        <th>Destination</th>
+        <th>ETime</th>
+        <th>RTime</th>
+        <th>RqGb</th>
+        <th>SrGb</th>
+        <th>TraceNo</th>
+        <th>TxCd</th>
+        <th>ResCd</th>
+        <th>Message</th>
+        <th>IO</th>
+        <th>Data</th>
+        <th>UserData</th>
+        <th>Channel</th>
+        <th>Etc</th>
+    </tr>
+    </tfoot>
+</table>
 <!-- 디테일 모달 -->
-<div id="detailModal" class="modal fade" role="dialog">
+<div id="detail-modal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -32,13 +95,13 @@
                 <div class="row detail-body">
 
                 </div>
-                <div id="disqus_thread"></div>
-
             </div>
         </div>
     </div>
 </div>
-
+<button id="detail-btn" data-toggle="modal" data-target="#detail-modal"
+        type="button" class="btn-danger btn">dddd
+</button>
 <!-- 로그인 모달 -->
 <div id="loginModal" class="modal fade" role="dialog">
     <div id="login_bg"
@@ -93,73 +156,217 @@
     </div>
 </div>
 <!-- Scripts Don't remove ↓ -->
+
+<script src="js/jquery-3.2.1.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/jquery-ui-sliderAccess.js"></script>
+<script src="js/jquery-ui-timepicker-addon.js"/>
+<script src="js/bootstrap.min.js"></script>
+<script src="DataTables/datatables.min.js"></script>
+<script src="js/bootstrap-select.min.js"></script>
+
 <script>
 
-    var disqus_config = function () {
-        this.page.url = "doblue.ga" + '/ensof/';  // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = "doblue.ga" + '/ensof/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-    };
-
-    (function () { // DON'T EDIT BELOW THIS LINE
-        var d = document, s = d.createElement('script');
-        s.src = 'https://doblue.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
-    Disqus.</a></noscript>
-<script src="js/jquery-3.2.1.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
-<script src="js/app.js"></script>
-<script src="ckeditor/ckeditor.js"></script>
-<script type="text/javascript">
     $(document).ready(function () {
-        $('#fullpage').fullpage({
-            anchors: ['firstPage', 'secondPage', '3rdPage', '4thPage'],
-            sectionsColor: ['#FFFFFF', 'lavenderblush', '#d2deea', '#ffffff'],
-            menu: '#menu',
-            navigation: true,
-            navigationPosition: 'right',
-            navigationTooltips: ['First page', 'Second page', 'Third and last page'],
-            responsiveWidth: 1100
-        });
 
-        var lis = $('.nav > li');
-        menu_focus(lis[0], 1);
+    })
+    var initdate = function (min) {
+        var myDate = new Date();
+        if (min == 0) { // 1시간 후
+            myDate = new Date(Date.parse(myDate) + 1000 * 60 * 60);
+        } else if (min != null) { // 그외에는 min 값만큼 분을 뺀다.
+            myDate = new Date(Date.parse(myDate) - 1000 * 60 * min);
+        } else { // 5분전 (디폴트)
+            myDate = new Date(Date.parse(myDate) - 1000 * 60 * 5);
+        }
 
-        $("#write-modal-btn").click(function () {
-            write_init();
-        });
-
-        var write_init = function () {
-            CKEDITOR.replace('write_content', {
-                customConfig: 'ckeditor/config.js',
-                width: '100%',
-                height: '300px',
-                filebrowserUploadUrl: 'imageUpload',
-            })
-
-        };
-
-        CKEDITOR.on('dialogDefinition', function (ev) {
-            var dialogName = ev.data.name;
-            var dialog = ev.data.definition.dialog;
-            var dialogDefinition = ev.data.definition;
-            if (dialogName == 'image') {
-                dialog.on('show', function (obj) {
-//                 this.selectPage('Upload'); //업로드텝으로 시작
-                });
-                dialogDefinition.removeContents('advanced'); // 자세히탭 제거
-                dialogDefinition.removeContents('Link'); // 링크탭 제거
-            }
-        });
+        return myDate;
+    };
+    /*데이트피커*/
+    var dates = $("#sdatepicker, #edatepicker ").datepicker({
+        dateFormat: "yy-mm-dd",
+        yearSuffix: '년',
+        showOtherMonths: true,
+        yearRange: "2017:2022",
+        monthNames: ["1월", "2월", "3월", "4월", "5월", "6월",
+            "7월", "8월", "9월", "10월", "11월", "12월"],
+        onSelect: function (selectedDate) {
+            var option = this.id == "sdatepicker" ? "minDate" : "maxDate",
+                instance = $(this).data("datepicker"),
+                date = $.datepicker.parseDate(
+                    instance.settings.dateFormat ||
+                    $.datepicker._defaults.dateFormat,
+                    selectedDate, instance.settings);
+            dates.not(this).datepicker("option", option, date);
+        },
 
 
     });
+    $("#sdatepicker").datepicker("setDate", initdate());
+    $("#edatepicker ").datepicker("setDate", initdate(0));
+    /*타임피커*/
+    var startTimeTextBox = $("#stimedatepicker");
+    var endTimeTextBox = $("#etimedatepicker");
+    $.timepicker.timeRange(
+        startTimeTextBox,
+        endTimeTextBox,
+        {
+            minInterval: (1000 * 60), // 1min
+            timeFormat: 'HH:mm',
+            start: {}, // start picker options
+            end: {} // end picker options
+        }
+    );
+    startTimeTextBox.timepicker("setDate", initdate());
+    endTimeTextBox.timepicker("setDate", initdate(0));
 
+    var getSstampTime = function () {
+        var sTime = startTimeTextBox.datepicker("getDate");
+        console.log(sTime);
+        return sTime;
+    }
+    var getEstampTime = function () {
+        var eTime = endTimeTextBox.datepicker("getDate");
+        console.log(eTime);
+
+        return eTime;
+
+    }
+    /*    $.ajax({
+            url: "cube",
+            method: "get",
+            success: function (data) {
+                console.log(data)
+
+            }, fail: function () {
+                alert("실패")
+            }
+
+        })*/
+    /* 데이터테이블*/
+    $.fn.dataTable.ext.buttons.reload = {
+        text: '<i class="fa fa-refresh" aria-hidden="true"></i>',
+        key: 'r',
+        titleAttr: 'hotkey : r',
+        action: function (e, dt, node, config) {
+            dt.ajax.reload();
+        }
+    };
+    var table = $("#cubeTable").DataTable({
+        dom: 'Bfrtpi',
+        stateSave: true,
+        ajax: {
+            url: "cube",
+            method: "get",
+            data: {}
+        },
+        select: true,
+        scrollY: $(document).height() * 2 / 3,
+        //  ㄴ 나중에 조사해봤는데 scrollY=66vh(내장함수)와 같다고합니다..
+        lengthMenu: [
+            [25, 50, 100, -1],
+            ['25 rows', '50 rows', '100 rows', 'Show all']
+        ],
+        columns: [
+            {data: 'trTimeStamp'},
+            {data: 'sysCode'},
+            {data: 'trNo'},
+            {data: 'orgCode'},
+            {data: 'source'},
+            {data: 'destination'},
+            {data: 'eTime'},
+            {data: 'rTime'},
+            {data: 'rqGb'},
+            {data: 'srGb'},
+            {data: 'traceNo'},
+            {data: 'txCd'},
+            {data: 'respCd'},
+            {data: 'msgCode'},
+            {data: 'inlen'},
+            {data: 'txlen'},
+            {data: 'userData'},
+            {data: 'etc2'},
+            {data: 'etc1'}
+        ],
+        buttons: [
+
+            'pageLength',
+            {
+                extend: 'colvis',
+                text: 'filter',
+                collectionLayout: 'fixed three-column',
+                postfixButtons: ['colvisRestore'],
+                columnText: function (dt, idx, title) {
+                    return (idx + 1) + ': ' + title;
+                }
+            },
+            'copy', 'reload', {
+                extend: 'collection',
+                text: '<i class="fa fa-floppy-o" aria-hidden="true"></i>',
+                titleAttr: '저장',
+                autoClose: true,
+                buttons: [
+
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: [0, ':visible']
+                            /* @MSG 기본 첫번째 컬럼은 무조건 나오게 설정하였습니다. by SH*/
+                        }
+                    }, {
+                        extend: 'pdf',
+                        exportOptions: {
+                            columns: [0, ':visible']
+                        }
+                    }, {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: [0, ':visible']
+                        }
+                    }
+                ]
+            }
+        ], language: {
+            buttons: {
+                copyTitle: 'Completed',
+                copySuccess: {
+                    _: '%d건 클립보드에 저장되었습니다. [ctrl + v]',
+                    1: '1 건 클립보드에 저장되었습니다. [ctrl + v]'
+                },
+                search: "통합검색",
+                searchPlaceholder: "Search..."
+            }
+        }
+
+    });
+    $('#cubeTable tbody').on('dblclick', 'tr', function () {
+        var data = table.row(this).data();
+        var name = $('td', this).eq(1).text();
+        $('#detail-modal').modal("show");
+        console.log("dd")
+    });
+
+    var ctrlPressed = false;
+    $('#cubeTable tbody').on('click', 'tr', function () {
+
+        if (ctrlPressed) {
+            $(this).toggleClass('selected');
+
+        }
+    });
+    $(document).keydown(function (event) {
+        if (event.which == "17")
+            ctrlPressed = true;
+    });
+
+    $(document).keyup(function () {
+        ctrlPressed = false;
+    });
+
+
+    var loadData = function () {
+
+    }
 
 </script>
 </body>

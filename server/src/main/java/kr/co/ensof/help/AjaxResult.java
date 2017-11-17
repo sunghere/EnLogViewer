@@ -1,5 +1,7 @@
 package kr.co.ensof.help;
 
+import kr.co.ensof.model.Cube;
+
 /**
  * Created by SungHere on 2017-06-02.
  */
@@ -7,6 +9,16 @@ package kr.co.ensof.help;
 public class AjaxResult {
 
     private String result;/*결과담을 필드*/
+
+    private Cube cube;
+
+    public Cube getCube() {
+        return cube;
+    }
+
+    public void setCube(Cube cube) {
+        this.cube = cube;
+    }
 
     public AjaxResult() {
     }
