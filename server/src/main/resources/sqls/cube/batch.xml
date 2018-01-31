@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Batch">
+
+
+    <select id="listAll" parameterType="com.ensof.model.Batch"
+            resultType="com.ensof.model.Batch">
+        SELECT
+            STIMESTAMP,
+            STARTDATE,
+            STARTTIME,
+            ETIMESTAMP,
+            ENDDATE,
+            ENDTIME,
+            SYSCODE,
+            ORGCODE,
+            OPERATION,
+            PROTOCOL,
+            SRGB,
+            PROCESS,
+            STATUS,
+            ORGNAME,
+            ORGPATH,
+            ORGLASTMOD,
+            ORGLENGTH,
+            ETIME,
+            TRANSFER,
+            BASEDATE,
+            REPNAME,
+            HOLIDAY,
+            OVERLAPPATH,
+            WORKPATH,
+            DONEPATH,
+            ERRORPATH,
+            ERROR
+        FROM EN_TRANSFER_LOG T
+        WHERE 1 = 1 AND
+              STIMESTAMP BETWEEN #{sdate} AND #{edate} AND
+              10000 > ROWNUM
+        ORDER BY STIMESTAMP DESC
+    </select>
+
+
+</mapper>

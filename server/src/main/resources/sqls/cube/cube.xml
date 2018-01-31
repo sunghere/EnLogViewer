@@ -5,10 +5,11 @@
 <mapper namespace="Cube">
 
 
-    <select id="listAll" parameterType="kr.co.ensof.model.Cube"
-            resultType="kr.co.ensof.model.Cube">
+    <select id="listAll" parameterType="com.ensof.model.Cube"
+            resultType="com.ensof.model.Cube">
         SELECT
             TRTIMESTAMP AS TRTIMESTAMP,
+            TRDATE      AS TRDATE,
             SYSCODE     AS SYSCODE,
             ORGCODE     AS ORGCODE,
             DESTINATION AS DESTINATION,
@@ -35,71 +36,128 @@
 
         WHERE 1000 > ROWNUM
     </select>
-    <select id="listByTime" parameterType="kr.co.ensof.model.Cube"
-            resultType="kr.co.ensof.model.Cube">
+    <select id="listByTrNo" parameterType="com.ensof.model.Cube"
+            resultType="com.ensof.model.Cube">
         SELECT
-            T.TRTIMESTAMP AS TRTIMESTAMP,
-            T.SYSCODE     AS SYSCODE,
-            T.ORGCODE     AS ORGCODE,
-            T.DESTINATION AS DESTINATION,
-            T.SOURCE      AS SOURCE,
-            T.TRNO        AS TRNO,
-            T.RQGB        AS RQGB,
-            T.SRGB        AS SRGB,
-            T.MSGCODE     AS MSGCODE,
-            T.TXCD        AS TXCD,
-            T.TRCD        AS TRCD,
-            T.RESPCD      AS RESPCD,
-            T.TRACENO     AS TRACENO,
-            T.USERDATA    AS USERDATA,
-            T.ETC1        AS ETC1,
-            T.ETC2        AS ETC2,
-            T.ETC3        AS ETC3,
-            T.INLEN       AS INLEN,
-            T.ETIME       AS ETIME,
-            T.RTIME       AS RTIME,
-            T.TXLEN       AS TXLEN,
-            T.COMPRESS_YN AS COMPRESS_YN,
-            T.TXCOUNT     AS TXCOUNT,
-            M.TXSEQ     AS TXSEQ,
-            M.TXDATA    AS TXDATA
-        FROM EN_TRLOG T LEFT OUTER JOIN EN_TRLOG_MESG M
-                ON T.SYSCODE = M.SYSCODE AND T.TRTIMESTAMP = M.TRTIMESTAMP AND T.TRNO = M.TRNO AND T.ORGCODE = M.ORGCODE
-                   AND T.DESTINATION = M.DESTINATION AND T.SOURCE = M.SOURCE AND T.RQGB = M.RQGB AND T.SRGB = M.SRGB
-        WHERE 1000 > ROWNUM AND M.TRTIMESTAMP >= #{sTimeStamp} AND #{eTimeStamp} >= M.TRTIMESTAMP
+            TRTIMESTAMP AS TRTIMESTAMP,
+            TRDATE      AS TRDATE,
+            SYSCODE     AS SYSCODE,
+            ORGCODE     AS ORGCODE,
+            DESTINATION AS DESTINATION,
+            SOURCE      AS SOURCE,
+            TRNO        AS TRNO,
+            RQGB        AS RQGB,
+            SRGB        AS SRGB,
+            MSGCODE     AS MSGCODE,
+            TXCD        AS TXCD,
+            TRCD        AS TRCD,
+            RESPCD      AS RESPCD,
+            TRACENO     AS TRACENO,
+            USERDATA    AS USERDATA,
+            ETC1        AS ETC1,
+            ETC2        AS ETC2,
+            ETC3        AS ETC3,
+            INLEN       AS INLEN,
+            ETIME       AS ETIME,
+            RTIME       AS RTIME,
+            TXLEN       AS TXLEN,
+            COMPRESS_YN AS COMPRESS_YN,
+            TXCOUNT     AS TXCOUNT
+        FROM EN_TRLOG T
+
+        WHERE 1 = 1 AND TRNO = #{trNo} AND TRDATE = #{trDate} AND MSGCODE NOT LIKE '%SUCCESS%'
+        ORDER BY TRTIMESTAMP ASC
     </select>
-    <select id="detail" parameterType="kr.co.ensof.model.Cube"
-            resultType="kr.co.ensof.model.Cube">
+    <select id="listByTime" parameterType="com.ensof.model.Cube"
+            resultType="com.ensof.model.Cube">
         SELECT
-            T.TRTIMESTAMP AS TRTIMESTAMP,
-            T.SYSCODE     AS SYSCODE,
-            T.ORGCODE     AS ORGCODE,
-            T.DESTINATION AS DESTINATION,
-            T.SOURCE      AS SOURCE,
-            T.TRNO        AS TRNO,
-            T.RQGB        AS RQGB,
-            T.SRGB        AS SRGB,
-            T.MSGCODE     AS MSGCODE,
-            T.TXCD        AS TXCD,
-            T.TRCD        AS TRCD,
-            T.RESPCD      AS RESPCD,
-            T.TRACENO     AS TRACENO,
-            T.USERDATA    AS USERDATA,
-            T.ETC1        AS ETC1,
-            T.ETC2        AS ETC2,
-            T.ETC3        AS ETC3,
-            T.INLEN       AS INLEN,
-            T.ETIME       AS ETIME,
-            T.RTIME       AS RTIME,
-            T.TXLEN       AS TXLEN,
-            T.COMPRESS_YN AS COMPRESS_YN,
-            T.TXCOUNT     AS TXCOUNT,
-            M.TXSEQ     AS TXSEQ,
-            M.TXDATA    AS TXDATA
+            T.TRTIMESTAMP    AS TRTIMESTAMP,
+            T.TRDATE         AS TRDATE,
+            TEMP.SYSCODE     AS SYSCODE,
+            TEMP.ORGCODE     AS ORGCODE,
+            TEMP.DESTINATION AS DESTINATION,
+            T.SOURCE         AS SOURCE,
+            T.TRNO           AS TRNO,
+            TEMP.RQGB        AS RQGB,
+            TEMP.SRGB        AS SRGB,
+            T.MSGCODE        AS MSGCODE,
+            TEMP.TXCD        AS TXCD,
+            TEMP.TRCD        AS TRCD,
+            TEMP.RESPCD      AS RESPCD,
+            TEMP.TRACENO     AS TRACENO,
+            T.USERDATA       AS USERDATA,
+            T.ETC1           AS ETC1,
+            T.ETC2           AS ETC2,
+            T.ETC3           AS ETC3,
+            T.INLEN          AS INLEN,
+            T.ETIME          AS ETIME,
+            T.RTIME          AS RTIME,
+            T.TXLEN          AS TXLEN,
+            T.COMPRESS_YN    AS COMPRESS_YN,
+            T.TXCOUNT        AS TXCOUNT
+
+        FROM EN_TRLOG T, (SELECT
+                              min(ROWID) AS                   ri,
+                              WM_CONCAT(DISTINCT SRGB)        SRGB,
+                              WM_CONCAT(DISTINCT RQGB)        RQGB,
+                              WM_CONCAT(DISTINCT SYSCODE)     SYSCODE,
+                              WM_CONCAT(DISTINCT ORGCODE)     ORGCODE,
+                              WM_CONCAT(DISTINCT DESTINATION) DESTINATION,
+                              WM_CONCAT(DISTINCT RESPCD)      RESPCD,
+                              WM_CONCAT(DISTINCT TRCD)        TRCD,
+                              WM_CONCAT(DISTINCT TXCD)        TXCD,
+                              WM_CONCAT(DISTINCT TRACENO)     TRACENO
+                          FROM EN_TRLOG
+                          WHERE TRTIMESTAMP BETWEEN #{sdate} AND #{edate}
+                          GROUP BY TRNO) TEMP
+        WHERE 1 = 1 AND
+              T.TRTIMESTAMP BETWEEN #{sdate} AND #{edate} AND
+              T.MSGCODE NOT LIKE '%Common_%' AND T.rowid = TEMP.ri
+        ORDER BY TRTIMESTAMP DESC
+    </select>
+    <select id="detail" parameterType="com.ensof.model.Cube"
+            resultType="com.ensof.model.Cube">
+        SELECT
+        T.TRTIMESTAMP AS TRTIMESTAMP,
+        T.TRDATE AS TRDATE,
+        T.SYSCODE AS SYSCODE,
+        T.ORGCODE AS ORGCODE,
+        T.DESTINATION AS DESTINATION,
+        T.SOURCE AS SOURCE,
+        T.TRNO AS TRNO,
+        T.RQGB AS RQGB,
+        T.SRGB AS SRGB,
+        T.MSGCODE AS MSGCODE,
+        T.TXCD AS TXCD,
+        T.TRCD AS TRCD,
+        T.RESPCD AS RESPCD,
+        T.TRACENO AS TRACENO,
+        T.USERDATA AS USERDATA,
+        T.ETC1 AS ETC1,
+        T.ETC2 AS ETC2,
+        T.ETC3 AS ETC3,
+        T.INLEN AS INLEN,
+        T.ETIME AS ETIME,
+        T.RTIME AS RTIME,
+        T.TXLEN AS TXLEN,
+        T.COMPRESS_YN AS COMPRESS_YN,
+        T.TXCOUNT AS TXCOUNT,
+        M.TXSEQ AS TXSEQ,
+        M.TXDATA AS TXDATA
         FROM EN_TRLOG T LEFT OUTER JOIN EN_TRLOG_MESG M
-                ON T.SYSCODE = M.SYSCODE AND T.TRTIMESTAMP = M.TRTIMESTAMP AND T.TRNO = M.TRNO AND T.ORGCODE = M.ORGCODE
-                   AND T.DESTINATION = M.DESTINATION AND T.SOURCE = M.SOURCE AND T.RQGB = M.RQGB AND T.SRGB = M.SRGB
-        WHERE T.SYSCODE = #{sysCode} AND T.TRTIMESTAMP = #{trTimeStamp}
+        ON T.SYSCODE = M.SYSCODE AND T.TRTIMESTAMP = M.TRTIMESTAMP AND T.TRNO = M.TRNO AND T.ORGCODE = M.ORGCODE
+        AND T.DESTINATION = M.DESTINATION AND T.SOURCE = M.SOURCE AND T.RQGB = M.RQGB AND T.SRGB = M.SRGB
+        WHERE T.SYSCODE = #{sysCode} AND T.TRTIMESTAMP = #{trTimeStamp} AND T.TRNO = #{trNo} AND T.ORGCODE = #{orgCode}
+        AND T.SOURCE = #{source} AND T.DESTINATION = #{destination} AND T.RQGB = #{rqGb} AND T.SRGB = #{srGb}
+
+        <!-- <if test='rqGb !=null and rqGb.equals("Q")'>
+             AND T.SOURCE = #{source} AND T.DESTINATION = #{destination} AND T.RQGB = #{rqGb} AND T.SRGB = #{srGb}
+
+         </if>
+         <if test='rqGb !=null and rqGb.equals("P")'>
+             AND T.SOURCE =#{destination} AND T.DESTINATION = #{source} AND T.RQGB = #{rqGb} AND T.SRGB = #{srGb}
+
+         </if>-->
     </select>
 
 </mapper>

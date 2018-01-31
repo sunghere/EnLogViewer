@@ -1,372 +1,253 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Mc*CUBE DB LogViewer</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=10; IE=9; IE=8; IE=7; IE=EDGE"/>
+    <title>Mc*CUBE 3.5 WEB</title>
     <!-- CSS overrides - remove if you don't need it -->
-    <link rel="stylesheet" href="css/jquery-ui.min.css">
-    <link rel="stylesheet" href="css/font-awesome.min.css"/>
-    <link rel="stylesheet" href="css/jquery-ui-timepicker-addon.css"/>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet"
-          href="css/bootstrap-select.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/materialdesignicons.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui-timepicker-addon.css"/>
     <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/>
+
     <link rel="stylesheet" href="css/app.css">
 
 </head>
 <body>
-<div class="logo">
-    <a href="#"><img src="image/logo.png" class="img-rounded" alt="enSof"></a>
+
+<div class="sunghee-header">
+    <div class="sunghee-row">
+        <div class="sunghee-logo">
+            <div class="btn-group" data-toggle="buttons">
+                <label class="type-sel btn btn-info active" value="online">
+                    <input type="radio" name="options" checked="">온라인
+                </label>
+                <label class="type-sel btn btn-info" value="batch">
+                    <input type="radio" name="options"> 배치
+                </label>
+            </div>
+            <span>
+                <div class="title_Type" id="user-org"></div>
+                <div class="title_Type" id="user-name"></div>
+                 <button class="btn btn-primary" type="button" id="logout_btn" title="로그아웃"><i class="fa fa-sign-out"
+                                                                                               aria-hidden="true"></i>
+                </button>
+
+            </span>
+            <!--<span><img src="image/mcCUBE.png" width="" height="" alt="enSOF Technology"-->
+            <!--class="img-fluid"-->
+            <!--style=" height: 60px; width: 25%;"></span>-->
+            <!--</div>-->
+        </div>
+    </div>
 </div>
-<div id="cubeInfo">
-    <input type="text" id="sdatepicker" placeholder="StartDate" name="sdate">
-    <input type="text" id="stimedatepicker" placeholder="HH-mm-dd">
+
+<div id="cubeInfo" class="form-group">
+
+
+    <input type="text" class="border-input col-md-1" id="sdatepicker" placeholder="StartDate" name="sdate">
+    <input type="time" class="border-input col-md-1" id="stimedatepicker" placeholder="HH-mm-dd">
     ~
-    <input type="text" id="edatepicker" placeholder="EndDate" name="edate">
-    <input type="text" id="etimedatepicker" placeholder="HH-mm-dd">
+    <input type="text" class="border-input col-md-1" id="edatepicker" placeholder="EndDate" name="edate">
+    <input type="time" class="border-input col-md-1" id="etimedatepicker" placeholder="HH-mm-dd">
+
+
 </div>
 
-<table id="cubeTable" class="table table-striped nowrap hover" cellspacing="0" width="100%">
-    <thead>
-    <tr>
-        <th rowspan="2">Timestamp</th>
-        <th colspan="5">Name</th>
-        <th colspan="2">Time</th>
-        <th colspan="11">Information</th>
-    </tr>
-    <tr>
-        <th>SysCd</th>
-        <th>TrNo</th>
-        <th>OrgCode</th>
-        <th>Source</th>
-        <th>Destination</th>
-        <th>ETime</th>
-        <th>RTime</th>
-        <th>RqGb</th>
-        <th>SrGb</th>
-        <th>TraceNo</th>
-        <th>TxCd</th>
-        <th>ResCd</th>
-        <th>Message</th>
-        <th>IO</th>
-        <th>Data</th>
-        <th>UserData</th>
-        <th>Channel</th>
-        <th>Etc</th>
-    </tr>
-    </thead>
-    <tfoot>
-    <tr>
-        <th>Timestamp</th>
-        <th>SysCd</th>
-        <th>TrNo</th>
-        <th>OrgCode</th>
-        <th>Source</th>
-        <th>Destination</th>
-        <th>ETime</th>
-        <th>RTime</th>
-        <th>RqGb</th>
-        <th>SrGb</th>
-        <th>TraceNo</th>
-        <th>TxCd</th>
-        <th>ResCd</th>
-        <th>Message</th>
-        <th>IO</th>
-        <th>Data</th>
-        <th>UserData</th>
-        <th>Channel</th>
-        <th>Etc</th>
-    </tr>
-    </tfoot>
-</table>
-<!-- 디테일 모달 -->
-<div id="detail-modal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">
-                    <span aria-hidden="true">x</span>
-                    <span class="sr-only">Close</span>
-                </button>
-                <h3 class="detail-title"></h3>
-            </div>
-            <div class="modal-body">
-                <div class="row detail-body">
 
-                </div>
+<div class="cube-container">
+    <table id="cubeTable" class="table nowrap hover" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <thead>
+        <tr>
+            <th></th>
+            <th class="text-hide">거래시간</th>
+            <th>SysCD</th>
+            <th>전문번호</th>
+            <th>기관코드</th>
+            <th>요구기관</th>
+            <th>대상기관</th>
+            <th>S/R</th>
+            <th>FLAG</th>
+            <th>거래명</th>
+            <th>전문종별</th>
+            <th>거래구분</th>
+            <th>응답코드</th>
+            <th>전문</th>
+            <th>UserData</th>
+            <th>기타</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th>거래시간</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+
+    </table>
+</div>
+
+<div class="batch-container" hidden="hidden">
+
+    <table id="batchTable" class="table nowrap hover" cellpadding="0" cellspacing="0" border="0"
+           width="100%">
+        <thead>
+        <tr>
+            <th></th>
+            <th>SysCD</th>
+            <th>기관코드</th>
+            <th>프로토콜</th>
+            <th>타입</th>
+            <th>방식</th>
+            <th>S/R</th>
+            <th>상태</th>
+            <th>원본 파일명</th>
+            <th>변경후 파일명</th>
+            <th>최종작동일</th>
+            <th>Length</th>
+            <th>BaseDate</th>
+            <th>WorkPath</th>
+            <th>DonePath</th>
+            <th>OverlapPath</th>
+            <th>ErrorPath</th>
+            <th>에러내역</th>
+        </tr>
+        <tr>
+            <th>시작시간</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+    </table>
+</div>
+<div id="dialog" title="info">
+
+    <div class="dialog-left">
+        <div class="badge-dark">
+            <div>Channel : <span id="channel"></span></div>
+            <div>기관코드 : <span id="orgCode"></span></div>
+            <div>요구기관 : <span id="srce"></span></div>
+            <div>대상기관 : <span id="dest"></span></div>
+            <div>DATA [IN : <span id="inlength"></span> | OUT : <span id="txlength"></span>]</div>
+            <div>UserData : <span id="userData"></span></div>
+            <div>결과 : <span id="result"></span></div>
+        </div>
+        <textarea id="txData" class="ui-widget-content" readonly="readonly"></textarea>
+    </div>
+    <div class="dialog-right table-basic">
+
+    </div>
+</div>
+
+
+<div class="text-center" id="org_dialog" title="info">
+    <div class="table-basic">
+        <table>
+            <thead>
+            <tr>
+                <th>기관코드</th>
+                <th>기관명</th>
+            </tr>
+
+            </thead>
+            <tbody id="org_data">
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="text-center" id="history_dialog" title="info">
+    <div class="table-basic">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>이름</th>
+                <th>부서명</th>
+                <th>최종로그인</th>
+            </tr>
+
+            </thead>
+            <tbody id="history_data">
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="login_dialog" style="display:none; cursor: default">
+    <div class="modal-content login_popup_content">
+        <div class="modal-header line_none">
+            <h2 class="title_Type">
+                MC * CUBE
+            </h2>
+            <h3 class="subtitle_Type_mb50">
+                로그인 해주세요<i class=""></i>
+            </h3>
+        </div>
+        <div class="modal-body">
+            <input type="text" id="user_id" data-msg="ID" class="form-control input-sm" placeholder="ID"
+                   name="id" size="15">
+            <br>
+            <input type="password" id="user_pw" data-msg="패스워드" title="패스워드" class="form-control"
+                   placeholder="PASSWORD" size="15"><br>
+
+            <div id="loginErrmsg" class="subtitle_Type_mb50"></div>
+            <br>
+            <div class="btn-group">
+                <button class="btn btn-primary btn-default" type="button" id="login_btn" title="로그인">login
+                </button>
             </div>
         </div>
     </div>
 </div>
-<button id="detail-btn" data-toggle="modal" data-target="#detail-modal"
-        type="button" class="btn-danger btn">dddd
-</button>
-<!-- 로그인 모달 -->
-<div id="loginModal" class="modal fade" role="dialog">
-    <div id="login_bg"
-         style="background-color: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%;"></div>
-    <div class="modal-dialog login_popup" id="login_popup">
-        <div class="modal-content login_popup_content">
-            <div class="modal-header line_none">
-                <button type="button" class="close" id="login_close" data-dismiss="modal">
-                    <span class='loginexit' aria-hidden="true">x</span>
-                    <span class="sr-only">Close</span>
-                </button>
-                <h2 class="title_Type">
-                    For Admin
-                </h2>
-            </div>
-            <div class="modal-body">
-                <input type="text" id="login_id" data-msg="ID" class="form-control input-sm"
-                       placeholder="ID"
-                       name="id"
-                       size="15">
-                <br>
-                <input type="password" id="login_pwd" data-msg="패스워드" title="패스워드" class="form-control"
-                       placeholder="PASSWORD" name="pwd"
-                       size="15"><br>
-                <button class="btn btn-primary btn-default" type="button" id="login_btn" title="로그인">로그인
-                </button>
 
-                <div id='loginErrmsg' class="subtitle_Type_mb50"></div>
-
-            </div>
-        </div>
-    </div>
-</div>
-<div id="show-message-btn" data-toggle="modal" data-target="#message-modal"
-     type="button" hidden="hidden">
-</div>
-<!--메시지를 띄우는용도의 창 show_message사용-->
-<div id="message-modal" class="modal fade" role="dialog">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header line_none">
-                <button type="button" class="close" id="show-message-close"
-                        data-dismiss="modal">
-                    <span class='show-message-close' aria-hidden="true">x</span> <span
-                        class="sr-only">Close</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p class="text-center" id="my-message"></p>
-            </div>
-        </div>
-    </div>
-</div>
 <!-- Scripts Don't remove ↓ -->
 
 <script src="js/jquery-3.2.1.js"></script>
 <script src="js/jquery-ui.min.js"></script>
 <script src="js/jquery-ui-sliderAccess.js"></script>
-<script src="js/jquery-ui-timepicker-addon.js"/>
+<script src="js/jquery-ui-timepicker-addon.js"></script>
+<script src="js/jquery.blockUI.1.33.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="DataTables/datatables.min.js"></script>
-<script src="js/bootstrap-select.min.js"></script>
-
+<script src="DataTables/datatables.colResize.js"></script>
+<script src="js/online.js"></script>
+<script src="js/batch.js"></script>
+<script src="js/login.js"></script>
 <script>
 
-    $(document).ready(function () {
-
-    })
-    var initdate = function (min) {
-        var myDate = new Date();
-        if (min == 0) { // 1시간 후
-            myDate = new Date(Date.parse(myDate) + 1000 * 60 * 60);
-        } else if (min != null) { // 그외에는 min 값만큼 분을 뺀다.
-            myDate = new Date(Date.parse(myDate) - 1000 * 60 * min);
-        } else { // 5분전 (디폴트)
-            myDate = new Date(Date.parse(myDate) - 1000 * 60 * 5);
-        }
-
-        return myDate;
-    };
-    /*데이트피커*/
-    var dates = $("#sdatepicker, #edatepicker ").datepicker({
-        dateFormat: "yy-mm-dd",
-        yearSuffix: '년',
-        showOtherMonths: true,
-        yearRange: "2017:2022",
-        monthNames: ["1월", "2월", "3월", "4월", "5월", "6월",
-            "7월", "8월", "9월", "10월", "11월", "12월"],
-        onSelect: function (selectedDate) {
-            var option = this.id == "sdatepicker" ? "minDate" : "maxDate",
-                instance = $(this).data("datepicker"),
-                date = $.datepicker.parseDate(
-                    instance.settings.dateFormat ||
-                    $.datepicker._defaults.dateFormat,
-                    selectedDate, instance.settings);
-            dates.not(this).datepicker("option", option, date);
-        },
-
-
-    });
-    $("#sdatepicker").datepicker("setDate", initdate());
-    $("#edatepicker ").datepicker("setDate", initdate(0));
-    /*타임피커*/
-    var startTimeTextBox = $("#stimedatepicker");
-    var endTimeTextBox = $("#etimedatepicker");
-    $.timepicker.timeRange(
-        startTimeTextBox,
-        endTimeTextBox,
-        {
-            minInterval: (1000 * 60), // 1min
-            timeFormat: 'HH:mm',
-            start: {}, // start picker options
-            end: {} // end picker options
-        }
-    );
-    startTimeTextBox.timepicker("setDate", initdate());
-    endTimeTextBox.timepicker("setDate", initdate(0));
-
-    var getSstampTime = function () {
-        var sTime = startTimeTextBox.datepicker("getDate");
-        console.log(sTime);
-        return sTime;
-    }
-    var getEstampTime = function () {
-        var eTime = endTimeTextBox.datepicker("getDate");
-        console.log(eTime);
-
-        return eTime;
-
-    }
-    /*    $.ajax({
-            url: "cube",
-            method: "get",
-            success: function (data) {
-                console.log(data)
-
-            }, fail: function () {
-                alert("실패")
-            }
-
-        })*/
-    /* 데이터테이블*/
-    $.fn.dataTable.ext.buttons.reload = {
-        text: '<i class="fa fa-refresh" aria-hidden="true"></i>',
-        key: 'r',
-        titleAttr: 'hotkey : r',
-        action: function (e, dt, node, config) {
-            dt.ajax.reload();
-        }
-    };
-    var table = $("#cubeTable").DataTable({
-        dom: 'Bfrtpi',
-        stateSave: true,
-        ajax: {
-            url: "cube",
-            method: "get",
-            data: {}
-        },
-        select: true,
-        scrollY: $(document).height() * 2 / 3,
-        //  ㄴ 나중에 조사해봤는데 scrollY=66vh(내장함수)와 같다고합니다..
-        lengthMenu: [
-            [25, 50, 100, -1],
-            ['25 rows', '50 rows', '100 rows', 'Show all']
-        ],
-        columns: [
-            {data: 'trTimeStamp'},
-            {data: 'sysCode'},
-            {data: 'trNo'},
-            {data: 'orgCode'},
-            {data: 'source'},
-            {data: 'destination'},
-            {data: 'eTime'},
-            {data: 'rTime'},
-            {data: 'rqGb'},
-            {data: 'srGb'},
-            {data: 'traceNo'},
-            {data: 'txCd'},
-            {data: 'respCd'},
-            {data: 'msgCode'},
-            {data: 'inlen'},
-            {data: 'txlen'},
-            {data: 'userData'},
-            {data: 'etc2'},
-            {data: 'etc1'}
-        ],
-        buttons: [
-
-            'pageLength',
-            {
-                extend: 'colvis',
-                text: 'filter',
-                collectionLayout: 'fixed three-column',
-                postfixButtons: ['colvisRestore'],
-                columnText: function (dt, idx, title) {
-                    return (idx + 1) + ': ' + title;
-                }
-            },
-            'copy', 'reload', {
-                extend: 'collection',
-                text: '<i class="fa fa-floppy-o" aria-hidden="true"></i>',
-                titleAttr: '저장',
-                autoClose: true,
-                buttons: [
-
-                    {
-                        extend: 'excel',
-                        exportOptions: {
-                            columns: [0, ':visible']
-                            /* @MSG 기본 첫번째 컬럼은 무조건 나오게 설정하였습니다. by SH*/
-                        }
-                    }, {
-                        extend: 'pdf',
-                        exportOptions: {
-                            columns: [0, ':visible']
-                        }
-                    }, {
-                        extend: 'print',
-                        exportOptions: {
-                            columns: [0, ':visible']
-                        }
-                    }
-                ]
-            }
-        ], language: {
-            buttons: {
-                copyTitle: 'Completed',
-                copySuccess: {
-                    _: '%d건 클립보드에 저장되었습니다. [ctrl + v]',
-                    1: '1 건 클립보드에 저장되었습니다. [ctrl + v]'
-                },
-                search: "통합검색",
-                searchPlaceholder: "Search..."
-            }
-        }
-
-    });
-    $('#cubeTable tbody').on('dblclick', 'tr', function () {
-        var data = table.row(this).data();
-        var name = $('td', this).eq(1).text();
-        $('#detail-modal').modal("show");
-        console.log("dd")
-    });
-
-    var ctrlPressed = false;
-    $('#cubeTable tbody').on('click', 'tr', function () {
-
-        if (ctrlPressed) {
-            $(this).toggleClass('selected');
-
-        }
-    });
-    $(document).keydown(function (event) {
-        if (event.which == "17")
-            ctrlPressed = true;
-    });
-
-    $(document).keyup(function () {
-        ctrlPressed = false;
-    });
-
-
-    var loadData = function () {
-
-    }
 
 </script>
 </body>

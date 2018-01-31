@@ -4,10 +4,10 @@
  *
  * To rebuild or modify this file with the latest versions of the included
  * software please visit:
- *   https://datatables.net/download/#dt/jszip-2.5.0/pdfmake-0.1.32/dt-1.10.16/b-1.4.2/b-colvis-1.4.2/b-html5-1.4.2/b-print-1.4.2/r-2.2.0/sc-1.4.3/sl-1.2.3
+ *   https://datatables.net/download/#dt/jszip-2.5.0/pdfmake-0.1.32/dt-1.10.16/b-1.4.2/b-colvis-1.4.2/b-html5-1.4.2/b-print-1.4.2/cr-1.4.1/r-2.2.0/rg-1.0.2/sc-1.4.3/sl-1.2.3
  *
  * Included libraries:
- *   JSZip 2.5.0, pdfmake 0.1.32, DataTables 1.10.16, Buttons 1.4.2, Column visibility 1.4.2, HTML5 export 1.4.2, Print view 1.4.2, Responsive 2.2.0, Scroller 1.4.3, Select 1.2.3
+ *   JSZip 2.5.0, pdfmake 0.1.32, DataTables 1.10.16, Buttons 1.4.2, Column visibility 1.4.2, HTML5 export 1.4.2, Print view 1.4.2, ColReorder 1.4.1, Responsive 2.2.0, RowGroup 1.0.2, Scroller 1.4.3, Select 1.2.3
  */
 
 /*
@@ -297,7 +297,6 @@ table.dataTable td {
 .dataTables_wrapper .dataTables_info {
   clear: both;
   float: left;
-  padding-top: 0.755em;
 }
 .dataTables_wrapper .dataTables_paginate {
   float: right;
@@ -816,6 +815,19 @@ a.dt-button.processing:after {
 }
 
 
+table.DTCR_clonedTable.dataTable {
+  position: absolute !important;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 202;
+}
+
+div.DTCR_pointer {
+  width: 1px;
+  background-color: #0259C4;
+  z-index: 201;
+}
+
+
 table.dataTable.dtr-inline.collapsed > tbody > tr > td.child,
 table.dataTable.dtr-inline.collapsed > tbody > tr > th.child,
 table.dataTable.dtr-inline.collapsed > tbody > tr > td.dataTables_empty {
@@ -992,6 +1004,12 @@ div.dtr-modal div.dtr-modal-background {
   div.dtr-modal div.dtr-modal-display {
     width: 95%;
   }
+}
+
+
+table.dataTable tr.group td {
+  font-weight: bold;
+  background-color: #e0e0e0;
 }
 
 

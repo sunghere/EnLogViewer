@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="User">
+
+
+    <select id="login" parameterType="com.ensof.model.User"
+            resultType="com.ensof.model.User">
+        SELECT
+            USER_ID,
+            USER_NM,
+            AUTH_CD,
+            ORGNM,
+            USE_YN,
+            LOGIN_TIME,
+            LOGOUT_TIME,
+            FILLER1,
+            FILLER2,
+            FILLER3,
+            IPDTM
+        FROM IS_USER1
+        WHERE USER_ID = #{userId} AND USER_PW = #{userPw}
+    </select>
+    <select id="history" parameterType="com.ensof.model.User"
+            resultType="com.ensof.model.User">
+        SELECT
+            USER_ID,
+            USER_NM,
+            ORGNM,
+            USE_YN,
+            LOGIN_TIME,
+            LOGOUT_TIME,
+            FILLER1,
+            FILLER2,
+            FILLER3,
+            IPDTM
+        FROM IS_USER1 WHERE LOGIN_TIME >= TO_CHAR(TO_DATE(#{loginTime},'yyyy-MM-dd'),'yyyyMMdd')
+    </select>
+    <update id="loginTime" parameterType="com.ensof.model.User"
+          >
+      UPDATE IS_USER1 SET LOGIN_TIME = sysdate WHERE USER_ID = #{userId}
+    </update>
+</mapper>
